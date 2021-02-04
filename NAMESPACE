@@ -3,6 +3,7 @@
 export(MC_autocorr)
 export(MC_neff)
 export(MC_neff_theoretical)
+export(MC_neff_theoretical_stable)
 export(form_Y)
 export(get_a)
 export(get_alpha_map)
