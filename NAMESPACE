@@ -2,6 +2,7 @@
 
 export(MC_autocorr)
 export(MC_neff)
+export(MC_neff_stable)
 export(MC_neff_theoretical)
 export(MC_neff_theoretical_stable)
 export(form_Y)

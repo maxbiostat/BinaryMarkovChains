@@ -85,7 +85,7 @@ MC_neff <- function(samples, p = NULL){
 #'
 #' @return estimated "stable" effective sample size
 #' @importFrom markovchain createSequenceMatrix
-#' @export MC_neff
+#' @export MC_neff_stable
 #' @seealso  \code{\link[BinaryMarkovChains]{MC_neff_theoretical_stable}} \code{\link[BinaryMarkovChains]{MC_neff}}
 #' \code{\link[BinaryMarkovChains]{scaled_alpha}}
 #' \code{\link[BinaryMarkovChains]{scaled_average_transitions}}
