@@ -1,0 +1,180 @@
+---
+title: "Probability distributions of key quantities in two-state discrete-time Markov chain"
+author: "Luiz Max Carvalho"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk$set(fig.width=10, fig.height=8) 
+```
+
+## Introduction
+
+In this document we will illustrate some of the functionality of **BinaryMarkovChains** package and verify the probability distribution of key quantities in a two-state discrete-time Markov chain (DTMC), such as the recurrence and occupation times, and the (maximum) number of state transitions.
+
+We are interested in computing a few key probabilistic quantities for a DTMC $(X_k)_{k\geq 0}$ with state-space ${\cal S} = \{0, 1\}$ and matrix of transition probabilities
+$$
+\boldsymbol{P}_x := 
+\begin{bmatrix}
+1-\alpha & \alpha \\
+\beta & 1-\beta
+\end{bmatrix}
+$$
+for $\alpha, \beta \in [0, 1]^2$.
+The marginal success probability is $p := \operatorname{Pr}(X_k = 1) = \alpha/(\alpha + \beta)$.
+
+Our approach here will be to simulate a large number of replicates (`nsims`) of a DTMC with `N` observations.
+We will then compare results from these simulations with their theoretical counterparts, implemented in **BinaryMarkovChains**.
+
+First, let's set up.
+
+```{r}
+library(BinaryMarkovChains)
+library(markovchain)
+
+set.seed(666)
+p <- 0.666 ## marginal sucess probability 
+( maxAlpha <- get_max_alpha(p) ) ## maximum value for alpha given p
+
+indep_sampling <- FALSE
+
+if(indep_sampling){
+  alpha <- p
+}else{
+  alpha <- runif(1, 0, maxAlpha)
+}
+beta <- exp(log(alpha)  + log1p(-p) - log(p))
+
+transition.matrix <- abs(matrix(c(1-alpha, alpha, beta, 1-beta),
+                                ncol = 2, nrow = 2, byrow = TRUE))
+MC.binary <- new("markovchain",
+                 states = c("0", "1"),
+                 transitionMatrix = transition.matrix,
+                 name = "Binary")
+
+nsims <- 10000 ## number of Monte Carlo simulations
+N <- 1000 ## Markov chain iterations
+
+simulate_once <- function(i){
+  temp <- markovchainSequence(n = N, markovchain = MC.binary, t0 = "0")
+  recurrence.time <- min(which(temp[-1] == "0"))
+  X <- as.numeric(temp)
+  Y <- form_Y(X)
+  return(list(X = X, # Markov states
+              Y = Y, # Transitions
+              T = recurrence.time, # time to (first) return to "0"
+              occ_X = sum(X),
+              occ_Y = sum(Y))
+  )
+}
+```
+
+Now run the simulation.
+```{r}
+simu.time <- system.time(
+  raw.simus <- parallel::mclapply(1:nsims, simulate_once, mc.cores = 6)
+)
+simu.time
+```
+
+Finally, let's take a look at a few quantities.
+
+### Recurrence time
+
+Assuming $X_0 = 0$ we want to know the distribution of the time to return to $0$, i.e., the random variable $T = \inf\,\{n \geq 1 : X_n = 0 \}$.
+We know $T$ follows a geometric distribution ([Cox & Miller, 1965](https://books.google.com.br/books?hl=en&lr=&id=NeR5JEunGYwC&oi=fnd&pg=PR9&dq=Cox+and+Miller+1965+Theory+Stochastic&ots=VdHjPFxbyK&sig=HFMJo4ngtfj9u87WCf-Ynm_isDI#v=onepage&q=Cox%20and%20Miller%201965%20Theory%20Stochastic&f=false), page 83) and that $E[T] = (\alpha+\beta)/\beta$:
+```{r}
+Ts <- unlist(lapply(raw.simus, function(x) x$T))
+mean(Ts)
+(alpha + beta)/beta
+```
+
+Now let's visualise the probability mass function (p.m.f) of $T$, implemented in `recurrence_time_pmf()`:
+```{r}
+rtime.tab <- table(Ts)
+barplot(rtime.tab/nsims, xlab = expression(T), main = "Return time")
+rtimes <- as.numeric(names(rtime.tab))
+rprobs <- recurrence_time_pmf(x = rtimes, alpha = alpha, beta = beta)
+points(rtimes, rprobs/sum(rprobs), type = "b", lwd = 2, col = 2)
+```
+
+Seems spot on. 
+Now, let's look at the occupation time for the chain, $W_M := \sum_{k=0}^M X_k$.
+```{r}
+Ws <- unlist(lapply(raw.simus, function(x) x$occ_X))
+summary(Ws)
+mean(Ws)
+var(Ws)
+```
+
+We know the p.m.f. for $W_M$ from Theorem 1 in [Bhattacharya & Gupta (1980)](https://www.sciencedirect.com/science/article/pii/0166218X8090044X), with a minor typo fixed.
+This is implemented in `occupation_time_pmf()`.
+Let's see it in action:
+```{r}
+occXs <- min(Ws):max(Ws)
+poccXs <- occupation_time_pmf(x = occXs, n = N, alpha = alpha, beta = beta, X0 = "0")
+
+hist(Ws, probability = TRUE, xlab = expression(W[M]), main = "Occupation time, X")
+points(occXs, poccXs/sum(poccXs), type = "b", col = 3, lwd = 2)
+
+```
+
+Another important quantity in our analysis is the number of state transitions $0 \to 1$ and $1 \to 0$, also called _switches_.
+It turns out we can compute the p.m.f. of the number of switches, $Z_M$, by constructing another two-state DTMC $(Y_j)_{j\geq 0}$ _via_ $Y_j := |X_j-X_{j-1}|$ and defining $Y_0 = 0$.
+This new DTMC has generator
+
+$$
+\boldsymbol{P}_y := 
+\begin{bmatrix}
+1-a & a \\
+b & 1-b
+\end{bmatrix},
+$$
+with 
+$$
+ \begin{align}
+  a &=  \frac{\alpha\beta \left[ 2 - (\alpha + \beta)\right]}{(1-\beta)\alpha + \beta(1-\alpha)},\\
+  b &= \frac{\alpha\beta \left[ 2 - (\alpha + \beta)\right]}{2\alpha\beta}.  
+ \end{align}
+$$
+The package has utility functions `get_a()` and `get_b()` to facilitate computing these expressions.
+The number of state-transitions is thus the occupation time for $(Y_j)_{j\geq 0}$: $Z_M = \sum_{j=0} Y_j$.
+Let's confirm.
+First, a look at the statistical summaries of the distribution of $Z_M$:
+```{r}
+Zs <- unlist(lapply(raw.simus, function(x) x$occ_Y))
+summary(Zs)
+```
+A now we visualise the p.m.f.,
+```{r}
+a <- get_a(alpha = alpha, beta = beta)
+b <- get_b(alpha = alpha, beta = beta)
+
+occYs <- min(Zs):max(Zs)
+poccYs <- occupation_time_pmf(x = occYs, n = N, alpha = a, beta = b, X0 = "0")
+
+hist(Zs, probability = TRUE, xlab = expression(Z[M]), main = "Occupation time, Y (no. transtions)")
+points(occYs, poccYs/sum(poccYs), type = "b", col = "blue", lwd = 2)
+```
+Finally, we are prepared to look at the distribution of the maximum number of state-transitions given a certain occupation time, $\Delta_{\max}(W_M)$.
+The function $\Delta_{\max}(\cdot)$ can be computed with `get_maxK()` and the p.m.f. for $\Delta_{\max}(W_M)$  is implemented in `max_transitions_pmf()`.
+```{r}
+max.transitions <- get_maxK(Sx = Ws, M = N)
+
+Ms <- min(max.transitions):max(max.transitions)
+probMs <- max_transitions_pmf(x = Ms, n = N, alpha = alpha, beta = beta)
+
+hist(max.transitions, probability = TRUE,
+     xlab = expression(Delta[max]), main = "Maximum possible transitions")
+points(Ms, probMs/sum(probMs), type = "b", col = "purple", lwd = 2)
+```
+
