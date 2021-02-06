@@ -26,8 +26,8 @@ different results than \code{MC_neff()}.
 }
 \examples{
 X <- sample(c(0, 1), 1000, replace = TRUE)
-MC_neff(samples = X, p = 1/2)
-MC_neff(samples = X)
+MC_neff_stable(samples = X, p = 1/2)
+MC_neff_stable(samples = X)
 }
 \seealso{
 \code{\link[BinaryMarkovChains]{MC_neff_theoretical_stable}} \code{\link[BinaryMarkovChains]{MC_neff}}
