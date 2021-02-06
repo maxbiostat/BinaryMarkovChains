@@ -59,8 +59,9 @@ scaled_alpha <- function(samples, k = 1, v = 1, p = NULL){
 #' @seealso  \code{\link[BinaryMarkovChains]{MC_neff}} \code{\link[BinaryMarkovChains]{scaled_alpha}} \code{\link[BinaryMarkovChains]{scaled_average_transitions}}
 switching_ratio <- function(samples){
   N <- length(samples)
+  X.0 <- as.character(samples[1])
   occ.time <- sum(samples)
-  max.transitions <- get_maxK(S = occ.time, M = N)
+  max.transitions <- get_maxK(S = occ.time, M = N, X0 = X.0)
   Sy <- sum(form_Y(samples))
   delta <- Sy/max.transitions
   return(delta)
