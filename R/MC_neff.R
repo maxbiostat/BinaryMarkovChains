@@ -15,15 +15,13 @@ MC_neff_theoretical <- function(N, alpha, p){
   if(alpha < 0 || alpha > 1) stop("alpha must be between 0 and 1")
   if(p < 0 || p > 1) stop("p must be between 0 and 1")
   sr <- 2*(p-alpha)/alpha
-  if(sr < -1){
-    ans <- NaN
+  if(!is.finite(sr) || sr < -1){
+    ans <- NA
   }else{
     ans <- exp(log(N) - log1p(sr))
   }
   return(ans)
 }
-
-
 #' Compute the "stable" theoretical effective sample size in two-state Markov chain.
 #'
 #'This is the stabilised theoretical effective sample size for a sample of size \code{N} given parameters \code{alpha} and \code{p}.
@@ -97,8 +95,8 @@ MC_neff <- function(samples, p = NULL){
 #' different results than \code{MC_neff()}.
 #' @examples
 #' X <- sample(c(0, 1), 1000, replace = TRUE)
-#' MC_neff(samples = X, p = 1/2)
-#' MC_neff(samples = X)
+#' MC_neff_stable(samples = X, p = 1/2)
+#' MC_neff_stable(samples = X)
 MC_neff_stable <- function(samples, p = NULL){
   if(is.null(p)) p <- mean(samples, na.rm = TRUE)
   if(p < 0 || p > 1) stop("p must be between 0 and 1")
