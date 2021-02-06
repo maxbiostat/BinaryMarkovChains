@@ -4,7 +4,7 @@
 \alias{MC_neff_theoretical_stable}
 \title{Compute the "stable" theoretical effective sample size in two-state Markov chain.}
 \usage{
-MC_neff_theoretical_stable(N, alpha, p)
+MC_neff_theoretical_stable(N, alpha, p, epsilon = 0.02)
 }
 \arguments{
 \item{N}{number of iterations}
@@ -12,6 +12,9 @@ MC_neff_theoretical_stable(N, alpha, p)
 \item{alpha}{a transition probability (between 0 and 1)}
 
 \item{p}{(marginal) success probability}
+
+\item{epsilon}{stabilisation constant. Current default is \code{epsilon = 1/50} which
+leads to a cap of 50*N on \code{MC_ess_theoretical_stable}.}
 }
 \value{
 effective sample size
@@ -20,10 +23,9 @@ effective sample size
 This is the stabilised theoretical effective sample size for a sample of size \code{N} given parameters \code{alpha} and \code{p}.
 }
 \details{
-This version has a slightly different denominator that \strong{will} give different outputs.
-It is very similar to \code{MC_neff_theoretical} for independent sampling but will give an
-estimate that is a multiple of \code{MC_neff_theoretical},
-the factor depending on \code{p}.
+This version has a slightly different denominator that \strong{will} give
+different outputs.
+It is very similar to \code{MC_neff_theoretical} in most practical situations.
 }
 \examples{
 p <- .25
