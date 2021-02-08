@@ -4,14 +4,12 @@
 \alias{MC_neff_stable}
 \title{Estimate of the "stable" effective sample for two-state Markov chains.}
 \usage{
-MC_neff_stable(samples, p = NULL, epsilon = 0.02)
+MC_neff_stable(samples, p = NULL)
 }
 \arguments{
 \item{samples}{a vector of size N containing realisations of a two-state Markov chain.}
 
 \item{p}{(optional) marginal success probability. If \code{p = NULL}, the sample mean will be used.}
-
-\item{epsilon}{stabilisation constant. Current default is \code{epsilon = 1/50}.}
 }
 \value{
 estimated "stable" effective sample size
