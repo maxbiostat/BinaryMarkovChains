@@ -15,7 +15,7 @@ MC_neff_theoretical <- function(N, alpha, p){
   if(alpha < 0 || alpha > 1) stop("alpha must be between 0 and 1")
   if(p < 0 || p > 1) stop("p must be between 0 and 1")
   multiplier <- alpha/(2*p-alpha)
-  if(!is.finite(multiplier) || multiplier < 0){
+  if(!is.finite(multiplier) || multiplier <= 0){
     ans <- NA
   }else{
     ans <- exp(log(multiplier) + log(N))
@@ -29,9 +29,8 @@ MC_neff_theoretical <- function(N, alpha, p){
 #' @param N number of iterations
 #' @param alpha a transition probability (between 0 and 1)
 #' @param p (marginal) success probability
-#' @param epsilon stabilisation constant. Current default is \code{epsilon = 1/50} which
 #'  leads to a cap of 50*N on \code{MC_ess_theoretical_stable}.
-#'
+#' 
 #' @return effective sample size
 #' @export MC_neff_theoretical_stable
 #' @seealso  \code{\link[BinaryMarkovChains]{MC_neff_theoretical}}
@@ -41,11 +40,12 @@ MC_neff_theoretical <- function(N, alpha, p){
 #' @examples
 #' p <- .25
 #' MC_neff_theoretical_stable(N = 100, alpha = p, p = p) ## independent sampling gives N_eff = N
-MC_neff_theoretical_stable <- function(N, alpha, p, epsilon = 0.02){
+MC_neff_theoretical_stable <- function(N, alpha, p){
   if(alpha < 0 || alpha > 1) stop("alpha must be between 0 and 1")
   if(p < 0 || p > 1) stop("p must be between 0 and 1")
+  epsilon <- 1/(log10(N))
   multiplier <- alpha/(2*p-alpha + epsilon)
-  if(!is.finite(multiplier) || multiplier < 0){
+  if(!is.finite(multiplier) || multiplier <= 0){
     ans <- NA
   }else{
     ans <- exp(log(multiplier) + log(N))
@@ -86,7 +86,6 @@ MC_neff <- function(samples, p = NULL){
 #'
 #' @param samples a vector of size N containing realisations of a two-state Markov chain.
 #' @param p (optional) marginal success probability. If \code{p = NULL}, the sample mean will be used.
-#' @param epsilon stabilisation constant. Current default is \code{epsilon = 1/50}.
 #' 
 #' @return estimated "stable" effective sample size
 #' @importFrom markovchain createSequenceMatrix
@@ -104,13 +103,13 @@ MC_neff <- function(samples, p = NULL){
 #' X <- sample(c(0, 1), 1000, replace = TRUE)
 #' MC_neff_stable(samples = X, p = 1/2)
 #' MC_neff_stable(samples = X)
-MC_neff_stable <- function(samples, p = NULL, epsilon = 0.02){
+MC_neff_stable <- function(samples, p = NULL){
   if(is.null(p)) p <- mean(samples, na.rm = TRUE)
   if(p < 0 || p > 1) stop("p must be between 0 and 1")
+  N <- length(samples)
   obs.transitions <- markovchain::createSequenceMatrix(samples, sanitize = FALSE,
                                                        possibleStates = c("0", "1"))
   alpha.hat <- get_alpha_map(dmat = obs.transitions, k = 1, v = 1, p = p)
-  ans <- MC_neff_theoretical_stable(N = length(samples),
-                                    alpha = alpha.hat, p = p, epsilon = epsilon)
+  ans <- MC_neff_theoretical_stable(N = N, alpha = alpha.hat, p = p)
   return(ans)
 }
