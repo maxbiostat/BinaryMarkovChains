@@ -21,11 +21,12 @@ Estimate of the "stable" effective sample for two-state Markov chains.
 This functions provides an estimate of the effective sample size by plugging in an estimate of alpha in the form of its
 maximum \emph{a posteriori}  estimate (see \code{\link[BinaryMarkovChains]{get_alpha_map}}).
 If p is not known (\code{p = NULL}) then the sample mean, \code{mean(samples)} is used as an estimate.
-This is a version of \code{MC_neff()} that uses a slightly different denominator and \strong{will} give
-different results than \code{MC_neff()}.
+This is a version of \code{MC_neff()} that will cap off at N*log10(N).
 }
 \examples{
-X <- sample(c(0, 1), 1000, replace = TRUE)
+X <- c(rep(c(0, 1), 500), 0) # deterministically switching chain with odd number of observations
+MC_neff(samples = X, p = 1/2)
+MC_neff(samples = X)
 MC_neff_stable(samples = X, p = 1/2)
 MC_neff_stable(samples = X)
 }

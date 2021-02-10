@@ -18,10 +18,11 @@ leads to a cap of 50*N on \code{MC_ess_theoretical_stable}.}
 effective sample size
 }
 \description{
-This is the stabilised theoretical effective sample size for a sample of size \code{N} given parameters \code{alpha} and \code{p}.
+This is the stabilised theoretical effective sample size for a sample of
+size \code{N} given parameters \code{alpha} and \code{p}.
 }
 \details{
-This version has a slightly different denominator that \strong{will} give
+This version returns a maximum ESS of N*log10(N).
 different outputs.
 It is very similar to \code{MC_neff_theoretical} in most practical situations.
 }

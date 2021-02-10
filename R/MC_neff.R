@@ -24,7 +24,8 @@ MC_neff_theoretical <- function(N, alpha, p){
 }
 #' Compute the "stable" theoretical effective sample size in two-state Markov chain.
 #'
-#'This is the stabilised theoretical effective sample size for a sample of size \code{N} given parameters \code{alpha} and \code{p}.
+#'This is the stabilised theoretical effective sample size for a sample of
+#' size \code{N} given parameters \code{alpha} and \code{p}.
 
 #' @param N number of iterations
 #' @param alpha a transition probability (between 0 and 1)
@@ -34,7 +35,7 @@ MC_neff_theoretical <- function(N, alpha, p){
 #' @return effective sample size
 #' @export MC_neff_theoretical_stable
 #' @seealso  \code{\link[BinaryMarkovChains]{MC_neff_theoretical}}
-#' @details This version has a slightly different denominator that **will** give
+#' @details This version returns a maximum ESS of N*log10(N).
 #'  different outputs. 
 #' It is very similar to \code{MC_neff_theoretical} in most practical situations.
 #' @examples
@@ -43,8 +44,8 @@ MC_neff_theoretical <- function(N, alpha, p){
 MC_neff_theoretical_stable <- function(N, alpha, p){
   if(alpha < 0 || alpha > 1) stop("alpha must be between 0 and 1")
   if(p < 0 || p > 1) stop("p must be between 0 and 1")
-  epsilon <- 1/(log10(N))
-  multiplier <- alpha/(2*p-alpha + epsilon)
+  max.multi <- log10(N)
+  multiplier <- min(alpha/(2*p-alpha), max.multi)
   if(!is.finite(multiplier) || multiplier <= 0){
     ans <- NA
   }else{
@@ -97,10 +98,11 @@ MC_neff <- function(samples, p = NULL){
 #' @details  This functions provides an estimate of the effective sample size by plugging in an estimate of alpha in the form of its
 #' maximum _a posteriori_  estimate (see \code{\link[BinaryMarkovChains]{get_alpha_map}}).
 #' If p is not known (\code{p = NULL}) then the sample mean, \code{mean(samples)} is used as an estimate.
-#' This is a version of \code{MC_neff()} that uses a slightly different denominator and **will** give
-#' different results than \code{MC_neff()}.
+#' This is a version of \code{MC_neff()} that will cap off at N*log10(N).
 #' @examples
-#' X <- sample(c(0, 1), 1000, replace = TRUE)
+#' X <- c(rep(c(0, 1), 500), 0) # deterministically switching chain with odd number of observations
+#' MC_neff(samples = X, p = 1/2)
+#' MC_neff(samples = X)
 #' MC_neff_stable(samples = X, p = 1/2)
 #' MC_neff_stable(samples = X)
 MC_neff_stable <- function(samples, p = NULL){
