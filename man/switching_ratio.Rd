@@ -22,5 +22,16 @@ does not require any knowledge about any of the Markov chain parameters.
 On the other hand, it is computed \strong{conditional} on the observed occupation time and thus inherits its uncertainty.
 }
 \seealso{
-\code{\link[BinaryMarkovChains]{MC_neff}} \code{\link[BinaryMarkovChains]{scaled_alpha}} \code{\link[BinaryMarkovChains]{scaled_average_transitions}}
+\code{\link[BinaryMarkovChains]{split_switching_ratio}}
+\code{\link[BinaryMarkovChains]{MC_neff}} \code{\link[BinaryMarkovChains]{scaled_alpha}}
+\code{\link[BinaryMarkovChains]{scaled_average_transitions}}
+@examples
+X1 <- c(0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)
+X2 <- c(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0)
+switching_ratio(X1)
+switching_ratio(X2)
+switching_ratio(X1\link{1:8})
+switching_ratio(X1\link{9:16})
+switching_ratio(X2\link{1:8})
+switching_ratio(X2\link{9:16})
 }
