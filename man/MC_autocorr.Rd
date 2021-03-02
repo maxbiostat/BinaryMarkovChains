@@ -23,8 +23,10 @@ Autocorrelation function for a two-state Markov chain.
 library(markovchain)
 true.alpha <- .02
 true.beta <- .2
-mat <- abs(matrix(c(1-true.alpha, true.alpha, true.beta, 1-true.beta), ncol = 2, nrow = 2, byrow = TRUE))
-MC.binary <- new("markovchain", states = c("0", "1"), transitionMatrix = mat, name = "Binary")
+mat <- abs(matrix(c(1-true.alpha, true.alpha, true.beta, 1-true.beta),
+ ncol = 2, nrow = 2, byrow = TRUE))
+MC.binary <- new("markovchain", states = c("0", "1"),
+ transitionMatrix = mat, name = "Binary")
 M <- 1E4
 outs <- markovchainSequence(n = M, markovchain = MC.binary, t0 = "0")
 X <- as.numeric(outs)

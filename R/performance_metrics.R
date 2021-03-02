@@ -72,7 +72,7 @@ switching_ratio <- function(samples){
   N <- length(samples)
   X.0 <- as.character(samples[1])
   occ.time <- sum(samples)
-  max.transitions <- get_maxK(S = occ.time, M = N, X0 = X.0)
+  max.transitions <- get_maxK(Sx = occ.time, M = N, X0 = X.0)
   Sy <- sum(form_Y(samples)) 
   delta <- Sy/max.transitions
   if(max.transitions <= 0) delta <- 0

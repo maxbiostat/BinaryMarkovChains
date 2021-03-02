@@ -30,10 +30,13 @@ two-state Markov chain \strong{conditioning} on X_0 = 0 or X_0 = 1.
 M <- 100
 deltas.0 <- get_maxK(Sx = 0:(M-1), M = M, X0 = "0")[1:M]
 deltas.1 <- get_maxK(Sx = 1:M, M = M, X0 = "1")[1:M]
-probs.X0 <- max_transitions_pmf(x = deltas.0, n = M, alpha = .02, beta = .2, X0 = "0")
-probs.X1 <- max_transitions_pmf(x = deltas.1, n = M, alpha = .02, beta = .2, X0 = "1")
+probs.X0 <- max_transitions_pmf(x = deltas.0, n = M,
+ alpha = .02, beta = .2, X0 = "0")
+probs.X1 <- max_transitions_pmf(x = deltas.1, n = M,
+ alpha = .02, beta = .2, X0 = "1")
 sum(probs.X0); sum(probs.X1) # should both be 1
-plot(deltas.0, probs.X0, type = "h", lwd = 3, ylab = "Probability", xlab = expression(Delta[m]), main = "Maximum  transitions")
+plot(deltas.0, probs.X0, type = "h", lwd = 3,
+ ylab = "Probability", xlab = expression(Delta[m]), main = "Maximum  transitions")
 points(deltas.1, probs.X1, type = "h", lwd = 3, col = 2)
 legend(x = "topright", col = 1:2, legend = c(expression(X[0]==0),
  expression(X[0]==1)), bty = 'n', pch = 15)

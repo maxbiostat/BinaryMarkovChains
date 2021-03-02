@@ -4,7 +4,7 @@ author: "Luiz Max Carvalho"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Pmfs}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,7 +42,7 @@ library(BinaryMarkovChains)
 library(markovchain)
 
 set.seed(666)
-p <- 0.666 ## marginal sucess probability 
+p <- 0.666 ## marginal success probability 
 ( maxAlpha <- get_max_alpha(p) ) ## maximum value for alpha given p
 
 indep_sampling <- FALSE
@@ -81,7 +81,8 @@ simulate_once <- function(i){
 Now run the simulation.
 ```{r}
 simu.time <- system.time(
-  raw.simus <- parallel::mclapply(1:nsims, simulate_once, mc.cores = 6)
+  ## please increase the number of cores to a modern standard
+  raw.simus <- parallel::mclapply(1:nsims, simulate_once, mc.cores = 2) 
 )
 simu.time
 ```
