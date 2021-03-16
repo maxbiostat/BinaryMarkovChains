@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "lmax.fgv@gmail.com",
            comment = c(ORCID = "0000-0001-5736-5578"))
-Depends: R (>= 3.1.0), markovchain, matrixStats
+Depends: R (>= 3.1.0), markovchain, matrixStats, mcmcse
 Description: This package implements functions for studying and applying two-state (binary) discrete-time Markov chains. Probability mass functions (pmfs) are given for the occupation and recurrence times and also the (maximum) number of state transitions. Additionally, code for computing the effective sample size (N_eff) of a given sample from a binary Markov chain is given.
 License: MIT + file LICENSE
 Encoding: UTF-8
