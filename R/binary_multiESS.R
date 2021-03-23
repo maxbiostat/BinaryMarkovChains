@@ -170,16 +170,16 @@ binary_multiESS <- function (x, covmat = NULL, ncores = 2, ...)
   p = dim(chain)[2]
   if (is.matrix(covmat)) {
     var_mat <- binary_cov_matrix(chain, ncores = ncores)
-    det.var.p <- exp(sum(log(eigen(var_mat, only.values = TRUE)$values)/p))
-    det.covmat.p <- exp(sum(log(eigen(covmat, only.values = TRUE)$values)/p))
-    ess <- exp( log(n) + log(det.var.p)-log(det.covmat.p))
+    log.det.var.p <- sum(log(eigen(var_mat, only.values = TRUE)$values)/p)
+    log.det.covmat.p <- sum(log(eigen(covmat, only.values = TRUE)$values)/p)
+    ess <- exp( log(n) + log.det.var.p-log.det.covmat.p )
   }
   else {
     covmat <- mcmcse::mcse.multi(chain, ...)$cov
     var_mat <- binary_cov_matrix(chain, ncores = ncores)
-    det.var.p <- exp(sum(log(eigen(var_mat, only.values = TRUE)$values)/p))
-    det.covmat.p <- exp(sum(log(eigen(covmat, only.values = TRUE)$values)/p))
-    ess <- exp( log(n) + log(det.var.p)-log(det.covmat.p))
+    log.det.var.p <- sum(log(eigen(var_mat, only.values = TRUE)$values)/p)
+    log.det.covmat.p <- sum(log(eigen(covmat, only.values = TRUE)$values)/p)
+    ess <- exp( log(n) + log.det.var.p-log.det.covmat.p )
   }
   return(ess)
 }
