@@ -110,3 +110,32 @@ split_switching_ratio <- function(samples, k = 2){
   names(deltas) <- paste0("n=", ns)
   return(deltas)
 }
+
+#' Split (windowed) sucess probability
+#'
+#' Computes the average success probability for a number \code{k} of windows.
+#' @param samples a collection of N samples from a two-state Markov chain.
+#' @param  k a number of windows into which to break up the samples.
+#' Default is \code{k=2}.
+#'
+#' @return a list of scaled number of state transitions (between 0 and 1) in each of the \code{k} windows.
+#' @export split_phat
+#' @seealso  \code{\link[BinaryMarkovChains]{split_switching_ratio}}
+#' @details This function breaks up the samples into \code{k} windows computes the average successe probability for
+#' each one. Works in the same spirit as split-Rhat and other
+#'  metrics which compare one part of the chain to the others.
+#' @examples 
+#' X <- rbinom(1E6, size = 1, prob = .2)
+#' split_phat(X, k = 2)
+#' split_phat(X, k = 11)
+#' plot(split_phat(X, k = 200), type = "l")
+split_phat <- function(samples, k = 2){
+  if(k <= 0) stop("k needs to be larger than 0")
+  if(k >= length(samples)) stop("k needs to be smaller than the number of samples")
+  broken.up <- split(samples, cut(seq_along(samples), k, labels = FALSE))
+  raw.ps <- lapply(broken.up, mean, na.rm = TRUE)
+  ps <- unlist(raw.ps)
+  ns <- unlist(lapply(broken.up, length))
+  names(ps) <- paste0("n=", ns)
+  return(ps)
+}
