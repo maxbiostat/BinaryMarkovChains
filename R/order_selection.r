@@ -17,9 +17,12 @@ get_contingency_array <- function(seq, order){
   nstates <- length(states)
   inds <- seq_along(states)
   K <- order + 1
-  ind <- sapply(K:N, function(z) (z-K+1):z)
-  ind[] <- seq[ind]
-  do.call(table, asplit(ind, 1))
+  out <- array(0, dim = rep(nstates, K))
+  for (z in K:N){
+    pos <- matrix(match(seq[(z - K + 1):z], states), nrow = 1)
+    out[pos] <- out[pos] + 1
+  }
+  return(out)
 }
 #' Compute the likelihood ratio statistic comparing a second-order to a first-order Markov chain model for \code{seq}
 #'
