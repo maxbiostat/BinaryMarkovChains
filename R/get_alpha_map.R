@@ -23,3 +23,23 @@ get_alpha_map <- function(dmat, k = 1, v = 1, p){
   ans <- min(max(0, raw), 1)
   return(ans)
 }
+
+#' Estimate the 
+#'
+#' @param sample a collection of samples from a two-state Markov chain.
+#' @param k shape1 parameter of Beta prior on alpha (k > 0). Default is \code{k = 1}.
+#' @param v shape2 parameter of Beta prior on alpha (v > 0). Default is \code{v = 1}.
+#' @param p marginal success probability. If \code{NULL}, the MLE is used.
+#'
+#' @return estimate of alpha, the "flipping rate".
+#' @export estimate_alpha
+#'
+#' @examples
+estimate_alpha <- function(sample, k = 1, v = 1, p = NULL){
+  d.mat <- markovchain::createSequenceMatrix(sample,
+                                                sanitize = FALSE,
+                                                possibleStates = c("0", "1"))
+  if(is.null(p)) p <- mean(sample, na.rm = TRUE)
+  estimate <- get_alpha_map(dmat = d.mat, k = k, v = v, p = p)
+  return(estimate)
+}
