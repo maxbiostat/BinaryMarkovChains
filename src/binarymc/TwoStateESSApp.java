@@ -17,6 +17,7 @@ public class TwoStateESSApp extends beast.core.Runnable {
 	final public Input<File> traceInput = new Input<>("in", "trace file containing binary entries", new File("[[none]]"));
 	public Input<OutFile> outputInput = new Input<>("out","output file. Print to stdout if not specified", new OutFile("[[none]]"));
 	final public Input<Integer> burnInPercentageInput = new Input<>("burnin", "percentage of trace to be used as burn-in (and will be ignored)", 10);
+	final public Input<Integer> resampleInput = new Input<>("resample", "number of times the chain should be resampled", 1);
 
 	
 	@Override
@@ -29,6 +30,7 @@ public class TwoStateESSApp extends beast.core.Runnable {
 	public void run() throws Exception {
 		LogAnalyser traces = new LogAnalyser(traceInput.get().getPath(), burnInPercentageInput.get(), true, false);
 		
+		int resample = resampleInput.get();
 		
         PrintStream out = System.out;
         if (outputInput.get() != null && !outputInput.get().getName().equals("[[none]]")) {
@@ -44,6 +46,10 @@ public class TwoStateESSApp extends beast.core.Runnable {
         for (int i = 0; i < labels.size(); i++) {
         	String label = labels.get(i);
         	Double [] trace = traces.getTrace(label);
+        	if (resample > 1) {
+//        		trace = TSESS.resampleDeterministic(trace, 0, resample);
+        		trace = TSESS.resample(trace, 0, trace.length * resample);
+        	}
         	TSESS tsESS = new TSESS(trace, 0);
         	out.print(label + space.substring(label.length()) +
         			f.format(tsESS.pHat) + "\t" +
