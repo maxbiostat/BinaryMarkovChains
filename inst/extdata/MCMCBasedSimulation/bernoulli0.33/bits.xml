@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+
+<run id="mcmc" spec="MCMC" chainLength="100000">
+    <state id="state" spec="State" storeEvery="10000">
+	    <!-- 
+	    	In the next line, dimension is equivalent with ACT
+	    	Increasing the dimension (and thus ACT) also increases the number of entries in the trace log
+		-->    
+        <stateNode id="x" dimension="20" spec="parameter.BooleanParameter">true false</stateNode>
+    </state>
+
+    <distribution id="posterior" spec="beast.math.distributions.Prior">
+        <x id="sum" spec="beast.core.util.Sum" arg="@x"/>
+        <distr spec="beast.math.distributions.Uniform" lower="0" upper="20"/>
+    </distribution>
+
+    <operator id="Operator" spec="binarymc.BernoulliTrialGibbsOperator" parameter="@x" weight="1.0" p="0.33"/>
+
+    <logger id="tracelog" spec="Logger" fileName="bits.log" logEvery="1">
+        <log idref="posterior"/>
+        <log idref="sum"/>
+        <log idref="x"/>
+    </logger>
+
+    <logger id="screenlog" spec="Logger" logEvery="10000">
+        <log idref="posterior"/>
+    </logger>
+
+</run>
+
+</beast>
+

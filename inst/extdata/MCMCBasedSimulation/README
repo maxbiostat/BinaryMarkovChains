@@ -1,0 +1,32 @@
+Sample a boolean variable of dimension 20 and not thinning for 100000 samples with as posterior an exponential distribution with mean=10 (or uniform[0,10000]) on the sum of values being true.
+
+The MCMC proposal randomly selects a boolean value and flips the bit. 
+
+So, every proposal leads to an independent sample for one of the bits, thus the expected ESS for a single dimension is 90000/20=4500 (using 10% burnin).
+
+
+
+
+/uniform/bits.xml  BEAST XML file with uniform prior over sum of true => p = 0.5
+/uniform/run0/bits/log	trace log run 0
+...
+/uniform/run99/         trace log run 99 
+
+
+
+/exponential/bits.xml BEAST XML file with exponential prior (mean=10) over sum of true => p = 0.5
+/exponential/run0/bits/log	trace log run 0
+...
+/exponential/run99/         trace log run 99 
+
+
+bernoulli0.33/bits.xml BEAST XML file with uniform prior[0,20] over sum of true with Bernoulli Gibbs operator with p=0.33 instead of bitflip operator
+/bernoulli0.33/run0/bits/log	trace log run 0
+...
+/bernoulli0.33/run99/         trace log run 99 
+
+
+bernoulli0.5/bits.xml as bernoulli0.33/bits.xml but with p=0.5
+/bernoulli0.5/run0/bits/log	trace log run 0
+...
+/bernoulli0.5/run99/         trace log run 99 
