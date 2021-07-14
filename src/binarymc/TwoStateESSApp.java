@@ -51,7 +51,7 @@ public class TwoStateESSApp extends beast.core.Runnable {
         		trace = TSESS.resample(trace, 0, trace.length * resample);
         	}
         	TSESS tsESS = new TSESS(trace, 0);
-        	out.print(label + space.substring(label.length()) +
+        	out.print(label + (label.length() < space.length() ? space.substring(label.length()): " ")  +
         			f.format(tsESS.pHat) + "\t" +
         			f.format(tsESS.ESS()));
         	out.println();

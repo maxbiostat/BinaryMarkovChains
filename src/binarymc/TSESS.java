@@ -9,7 +9,7 @@ public class TSESS {
 	public double M; // number of raw (correlated) samples
 
 	// observation resample count for resampling as if resampleDeterministic() was called
-	final static double r = 1000;
+	final static double r = 1;
 	
 	public TSESS(Double [] trace, int burninPercentage) {
 		int burnin = burninPercentage * trace.length / 100;
@@ -60,6 +60,15 @@ public class TSESS {
 		double s = Math.sqrt(sqr((p11+W)*z) + 2*((U-W)*p11 - W*W - U*W)*z + sqr(U+W));
 		
 		alphaHat = -(s + (-p11-W)*z-W-U)/(2 * M * z);
+		
+
+		// alternative derivation of alphaHat, gives the same result
+//		double a = (p00 + p01 + p10 + p11 + k - 1 + v - 1) * (1-pHat);
+//		double b = - (U*pHat + W + p11*(1-pHat));
+//		double c = W * pHat;
+//		double alphaHat2 = (-b - Math.sqrt(b*b-4*a*c))/(2*a);
+//		System.err.println(alphaHat + " " + (alphaHat - alphaHat2)/alphaHat);
+		
 		delta = p01 + p10;
 	}
 	
@@ -68,11 +77,12 @@ public class TSESS {
 	}
 	
 	public double ESS() {
-		if (r > 1) {
-			// multiply by fudge factor = 2
-			return 2 * M * alphaHat / (2*pHat -alphaHat);
-		}		
-		return M * alphaHat / (2*pHat -alphaHat);
+//		if (r > 1) {
+//			// multiply by fudge factor = 2
+//			return 2 * M * alphaHat / (2*pHat -alphaHat);
+//		}		
+//		return M * alphaHat / (2*pHat -alphaHat);
+		return M * alphaHat / pHat;
 	}
 
 	/**
