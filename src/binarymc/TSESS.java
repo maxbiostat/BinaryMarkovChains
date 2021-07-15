@@ -25,19 +25,19 @@ public class TSESS {
 		pHat /= sampleCount;
 		
 		// count Markov chain transitions
-		double p00=0,p01=0,p10=0,p11=0;
+		double n00=0,n01=0,n10=0,n11=0;
 		for (int i = burnin; i < trace.length-1; i++) {
 			if (trace[i] == 0.0) {
 				if (trace[i+1] == 0.0) {
-					p00 += 1;
+					n00 += 1;
 				} else {
-					p01 += 1;
+					n01 += 1;
 				}
 			} else {
 				if (trace[i+1] == 0.0) {
-					p10 += 1;						
+					n10 += 1;						
 				} else {
-					p11 += 1;
+					n11 += 1;
 				}
 			}
 		}
@@ -45,21 +45,21 @@ public class TSESS {
 		// adjust constant observations as if the trace was 
 		// resampled using the resampleDeterministic() method
 		// with resampleCount = r
-		p00 = p00 * r + p10 * (r-1);
-		p11 = p11 * r + p01 * (r-1);
+		n00 = n00 * r + n10 * (r-1);
+		n11 = n11 * r + n01 * (r-1);
 		
 		// k & v are shape parameters on the beta prior on alpha
 		int k = 1;
 		int v = 1;
 		double z = (1-pHat)/pHat;
-		double U = p00 + v - 1;
-		double W = p01 + p10 + k - 1;
+		double U = n00 + v - 1;
+		double W = n01 + n10 + k - 1;
 		// M = observation count
-		M = p00 + p01 + p10 + p11;
+		M = n00 + n01 + n10 + n11;
 
-		double s = Math.sqrt(sqr((p11+W)*z) + 2*((U-W)*p11 - W*W - U*W)*z + sqr(U+W));
+		double s = Math.sqrt(sqr((n11+W)*z) + 2*((U-W)*n11 - W*W - U*W)*z + sqr(U+W));
 		
-		alphaHat = -(s + (-p11-W)*z-W-U)/(2 * M * z);
+		alphaHat = -(s + (-n11-W)*z-W-U)/(2 * M * z);
 		
 
 		// alternative derivation of alphaHat, gives the same result
@@ -69,7 +69,7 @@ public class TSESS {
 //		double alphaHat2 = (-b - Math.sqrt(b*b-4*a*c))/(2*a);
 //		System.err.println(alphaHat + " " + (alphaHat - alphaHat2)/alphaHat);
 		
-		delta = p01 + p10;
+		delta = n01 + n10;
 	}
 	
 	private double sqr(double x) {
