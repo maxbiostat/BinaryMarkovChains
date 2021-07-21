@@ -32,6 +32,22 @@ get_max_alpha <- function(p){
   ans <- min(p/(1-p), 1)
   return(ans)
 }
+#' Compute transition probability beta from alpha and p
+#'
+#' @param alpha 
+#' @param p 
+#'
+#' @return beta
+#' @export get_beta
+#'
+#' @examples
+#' p <- 0.2
+#' alpha <- get_max_alpha(p)/2
+#' beta <- get_beta(alpha = alpha, p = p)
+get_beta <- function(alpha, p){
+  beta <- exp(log(alpha) + log1p(-p) - log(p))
+  return(beta)
+}
 #' The a parameter in the state-change Markov chain.
 #'
 #' @param alpha a transition probability (between 0 and 1).
