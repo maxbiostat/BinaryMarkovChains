@@ -1,0 +1,36 @@
+
+<!--
+95%HPD = 0.235-31.5
+90%HPD = 0.348-21.2
+mean = 5.94
+-->
+<beast version='2.0'
+       namespace='beast.evolution.alignment:beast.core:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood'>
+
+    <parameter id="hky.kappa" value="1.0" lower="0.0"/>
+
+    <run spec="MCMC" id="mcmc" chainLength="1000" preBurnin="0">
+
+        <distribution spec='CompoundDistribution' id='posterior'>
+            <distribution spec='beast.math.distributions.Prior' x='@hky.kappa'>
+				<distr id="kappaprior" spec="beast.math.distributions.LogNormalDistributionModel" meanInRealSpace='false'>
+	                <parameter name='M' value="1.0" estimate='false'/>
+                	<parameter name='S' value="1.25" estimate='false'/>
+            	</distr>
+            </distribution>
+        </distribution>
+
+<!--
+        <operator id='kappaScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@hky.kappa"/>
+-->
+		<operator id="SampleFromPriorOperator" spec="orc.operators.SampleFromPriorOperator" parameter="@hky.kappa" weight="1" prior="@kappaprior"/>
+        <logger logEvery="1" fileName="$(filebase)$(run).log">
+            <log idref='hky.kappa'/>
+        </logger>
+        
+        <logger logEvery="1000">
+            <log idref="posterior"/>
+        </logger>
+    </run>
+
+</beast>
