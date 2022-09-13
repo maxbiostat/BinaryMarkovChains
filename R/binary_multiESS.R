@@ -13,9 +13,7 @@
 #' joint_p(X, Y)
 joint_p <- function(a, b, log = FALSE){
   if(length(a) != length(b)) stop("Vectors not of the same size")
-  tt <- table(a, b)
-  if(!identical(dim(tt) + 0, c(2, 2))) stop("Contigency table is not 2 x 2. Check your variables.")
-  ans <- log(tt[2, 2])-log(sum(tt))
+  ans <- log(mean(a*b))
   if(!log) ans <- exp(ans)
   return(ans)
 }
