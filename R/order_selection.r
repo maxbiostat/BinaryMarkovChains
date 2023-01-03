@@ -9,11 +9,11 @@
 #' @examples
 #' X <- rbinom(n = 1E5, size = 1, prob = 0.8)
 #' get_contingency_array(X, order = 3)
-get_contingency_array <- function(seq, order){
+get_contingency_array <- function(seq, order, states = NULL){
   ## Many thanks to https://stackoverflow.com/users/3358272/r2evans
   ## https://stackoverflow.com/questions/67004206/speeding-up-r-code-to-compute-higher-order-transitions-in-a-markov-chain
   N <- length(seq)
-  states <- sort(unique(seq))
+  if(is.null(states)) states <- sort(unique(seq))
   nstates <- length(states)
   inds <- seq_along(states)
   K <- order + 1
