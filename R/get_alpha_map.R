@@ -35,6 +35,8 @@ get_alpha_map <- function(dmat, k = 1, v = 1, p){
 #' @export estimate_alpha
 #'
 #' @examples
+#' X <- sample(c(0, 1), 10000, replace = TRUE)
+#' estimate_alpha(X) ## should be close to 1/2
 estimate_alpha <- function(sample, k = 1, v = 1, p = NULL){
   d.mat <- markovchain::createSequenceMatrix(sample,
                                                 sanitize = FALSE,
