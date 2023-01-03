@@ -105,6 +105,7 @@ compute_Hsquared <- function (seq, L = 10, states = NULL, eps = 1E-17)
 compute_stationarity_BF <- function(seq, L = 10, states = NULL){
   n <- length(seq)
   if(is.null(states)) states <- sort(unique(seq))
+  nstates <- length(states)
   Hsq <- compute_Hsquared(seq = seq, L = L, states = states)
   nu <- (L-1)*(nstates*(nstates-1))
   BF <- (Hsq - nu*log(n))/2
