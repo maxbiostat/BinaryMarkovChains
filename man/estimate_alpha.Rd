@@ -21,3 +21,7 @@ estimate of alpha, the "flipping rate".
 \description{
 Estimate the
 }
+\examples{
+X <- sample(c(0, 1), 10000, replace = TRUE)
+estimate_alpha(X) ## should be close to 1/2
+}

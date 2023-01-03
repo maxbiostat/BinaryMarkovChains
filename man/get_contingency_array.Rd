@@ -4,12 +4,15 @@
 \alias{get_contingency_array}
 \title{Compute transitions of a given order}
 \usage{
-get_contingency_array(seq, order)
+get_contingency_array(seq, order, states = NULL)
 }
 \arguments{
 \item{seq}{a vector containing observations from an stochastic process.}
 
 \item{order}{the order of the transitions to be computed (an integer).}
+
+\item{states}{the possible states of the Markov chain. If \code{NULL},
+will be deduced from 'seq'.}
 }
 \value{
 an array with the transitions in the format n_{ijk}, where i, j, k are in states(seq).

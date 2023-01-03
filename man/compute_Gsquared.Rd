@@ -4,7 +4,7 @@
 \alias{compute_Gsquared}
 \title{Compute the likelihood ratio statistic comparing a second-order to a first-order Markov chain model for \code{seq}}
 \usage{
-compute_Gsquared(seq)
+compute_Gsquared(seq, states = NULL)
 }
 \arguments{
 \item{seq}{a vector containing observations from an stochastic process.}

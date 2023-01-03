@@ -2,6 +2,8 @@
 #'
 #' @param seq  a vector containing observations from an stochastic process.
 #' @param order the order of the transitions to be computed (an integer).
+#' @param states the possible states of the Markov chain. If \code{NULL},
+#' will be deduced from 'seq'.
 #'
 #' @return an array with the transitions in the format n_{ijk}, where i, j, k are in states(seq).
 #' @export get_contingency_array
@@ -34,10 +36,10 @@ get_contingency_array <- function(seq, order, states = NULL){
 #' @examples
 #' X <- rbinom(n = 1E5, size = 1, prob = 0.8)
 #' compute_Gsquared(X)
-compute_Gsquared <- function(seq){
-  states <- sort(unique(seq))
+compute_Gsquared <- function(seq, states = NULL){
+  if(is.null(states))  states <- sort(unique(seq))
   nstates <- length(states)
-  dt <-  get_contingency_array(seq, 2)
+  dt <-  get_contingency_array(seq, 2, states = states)
   stats <- c()
   for(k in 1:nstates){
     for( i in 1:nstates){
@@ -59,12 +61,12 @@ compute_Gsquared <- function(seq){
 #' @param seq a vector containing observations from an stochastic process.
 #'
 #' @return the approximate Bayes factor comparing a second- to a first-order Markov chain model for \code{seq}.
-#' @export compute_BF
+#' @export compute_order_BF
 #'
 #' @examples
 #' X <- rbinom(n = 1E5, size = 1, prob = 0.8)
-#' compute_BF(X)
-compute_BF <- function(seq){
+#' compute_order_BF(X)
+compute_order_BF <- function(seq){
   n <- length(seq)
   m <- length(unique(seq))
   Gsq <- compute_Gsquared(seq)
@@ -110,11 +112,11 @@ compute_BF <- function(seq){
 #' find_k(X2)
 find_k <- function(seq, max_k = 10){
   k <- 1
-  BF <- compute_BF(seq)
+  BF <- compute_order_BF(seq)
   while(BF > 0){
     k <- k + 1
     inds <- seq.int(1L, length(seq), k)
-    BF <- compute_BF(seq = seq[inds])
+    BF <- compute_order_BF(seq = seq[inds])
     if(k >= max_k) break
   }
   return(
