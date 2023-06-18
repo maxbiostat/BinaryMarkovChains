@@ -34,8 +34,8 @@ get_max_alpha <- function(p){
 }
 #' Compute transition probability beta from alpha and p
 #'
-#' @param alpha 
-#' @param p 
+#' @param alpha 'flipping rate' (a probability)
+#' @param p marginal probability 
 #'
 #' @return beta
 #' @export get_beta

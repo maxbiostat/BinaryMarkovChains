@@ -4,7 +4,7 @@
 \alias{binary_multiESS}
 \title{Multivariate ESS for binary variables}
 \usage{
-binary_multiESS(x, covmat = NULL, ncores = 2, ...)
+binary_multiESS(x, covmat = NULL, ncores = 2, eigen = FALSE, ...)
 }
 \arguments{
 \item{x}{a matrix or data.frame containing only binary variables}

@@ -7,9 +7,9 @@
 get_beta(alpha, p)
 }
 \arguments{
-\item{alpha}{}
+\item{alpha}{'flipping rate' (a probability)}
 
-\item{p}{}
+\item{p}{marginal probability}
 }
 \value{
 beta

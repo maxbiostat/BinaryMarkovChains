@@ -138,6 +138,78 @@ binary_corr_matrix <- function(x, ncores = 2){
   }
   return(corr.mat)
 }
+
+#' Multivariate sampling efficiency using the log-determinant
+#'
+#' @param varMat covariance matrix
+#' @param covMat long term covariance matrix
+#'
+#' @return multivariate efficiency
+#' @export m_eff_det
+#' @details
+#' The function uses \code{base::determinant()} to get the required determinants
+#' 
+#'
+m_eff_det <- function(varMat, covMat) {
+  p <- ncol(covMat)
+  det.L <- determinant(varMat)
+  det.S <- determinant(covMat)
+  eff <- 
+    exp((as.numeric(det.L$modulus) - as.numeric(det.S$modulus)) / p)
+  return(eff)
+}
+
+#' Multivariate sampling efficiency using (log) eigen values
+#'
+#' @param varMat covariance matrix
+#' @param covMat long term covariance matrix
+#'
+#' @return multivariate efficiency
+#' @export m_eff_eigen
+#' @details
+#' The function uses \code{base::eigen()} to get the required determinants
+#' we take the log of the eigenvalues, and sum them to get the product in log-space
+#'
+m_eff_eigen <- function(varMat, covMat) {
+  p <- ncol(varMat)
+  log.det.var.p <- sum(log(eigen(
+    varMat, symmetric = TRUE,
+    only.values = TRUE
+  )$values))
+  log.det.covmat.p <-
+    sum(log(eigen(covMat, only.values = TRUE)$values))
+  ess <- exp((log.det.var.p - log.det.covmat.p) / p)
+  return(ess)
+}
+
+#' Multivariate ess
+#'
+#' @param N number of draws
+#' @param Lambda covariance matrix
+#' @param Sigma long-term covariance matrix
+#' @param eigen boolean. If \code{TRUE}, the eigenvalue method is used. Otherwise,
+#' the default \code{FALSE} uses the determinant method.
+#'
+#' @return the multivariate effective sample size
+#' @export theo_multivariate_ESS
+#'
+theo_multivariate_ESS <- function(N, Lambda, Sigma, eigen = FALSE) {
+  p <- ncol(Sigma)
+  if (nrow(Sigma) != p)
+    stop("Sigma is not square")
+  if (nrow(Lambda) != ncol(Lambda))
+    stop("Lambda is not square")
+  if (nrow(Lambda) != p)
+    stop("Lambda is not the same dimension as Sigma")
+  
+  if(eigen){
+    eff <- m_eff_eigen(varMat = Lambda, covMat  = Sigma)
+  }else{
+    eff <- m_eff_det(varMat = Lambda, covMat  = Sigma)
+  }
+  return(N * eff)
+}
+
 #' Multivariate ESS for binary variables
 #'
 #' @param x a matrix or data.frame containing only binary variables
@@ -159,7 +231,8 @@ binary_corr_matrix <- function(x, ncores = 2){
 #' X <- matrix(rbinom(n = N*M, size = 1, p = .234), ncol = N, nrow = M)
 #' binary_multiESS(X)
 #' mcmcse::multiESS(X)
-binary_multiESS <- function (x, covmat = NULL, ncores = 2, ...) 
+binary_multiESS <- function (x, covmat = NULL,
+                             ncores = 2, eigen = FALSE, ...) 
 {
   chain <- as.matrix(x)
   if (!is.matrix(x) && !is.data.frame(x)) 
@@ -168,16 +241,16 @@ binary_multiESS <- function (x, covmat = NULL, ncores = 2, ...)
   p = dim(chain)[2]
   if (is.matrix(covmat)) {
     var_mat <- binary_cov_matrix(chain, ncores = ncores)
-    log.det.var.p <- sum(log(eigen(var_mat, only.values = TRUE)$values)/p)
-    log.det.covmat.p <- sum(log(eigen(covmat, only.values = TRUE)$values)/p)
-    ess <- exp( log(n) + log.det.var.p-log.det.covmat.p )
+    ess <- theo_multivariate_ESS(N = n,
+                            Lambda = var_mat, Sigma = covmat,
+                            eigen = eigen)
   }
   else {
     covmat <- mcmcse::mcse.multi(chain, ...)$cov
     var_mat <- binary_cov_matrix(chain, ncores = ncores)
-    log.det.var.p <- sum(log(eigen(var_mat, only.values = TRUE)$values)/p)
-    log.det.covmat.p <- sum(log(eigen(covmat, only.values = TRUE)$values)/p)
-    ess <- exp( log(n) + log.det.var.p-log.det.covmat.p )
+    ess <- theo_multivariate_ESS(N = n,
+                            Lambda = var_mat, Sigma = covmat,
+                            eigen = eigen)
   }
   return(ess)
 }
