@@ -188,7 +188,7 @@ m_eff_eigen <- function(varMat, covMat) {
 #' @param Lambda covariance matrix
 #' @param Sigma long-term covariance matrix
 #' @param eigen boolean. If \code{TRUE}, the eigenvalue method is used. Otherwise,
-#' the default \code{FALSE} uses the determinant method.
+#' the default \code{FALSE} uses the determinant (LU decomposition) method.
 #'
 #' @return the multivariate effective sample size
 #' @export theo_multivariate_ESS
