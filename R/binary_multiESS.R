@@ -73,7 +73,10 @@ bin_corr <- function(pij, pi, pj){
 binary_cov_matrix <- function(x, ncores = 2){
   Var1 <- Var2 <- NULL
   Vs <- apply(x, 2, var)
-  if(any(Vs ==0)) stop("There are zero-variance variables!")
+  if(any(Vs ==0)) {
+    warning("There are zero-variance variables!")
+    return(NaN)
+  }
   N <- ncol(x)
   grid <- subset(expand.grid(1:N, 1:N), Var1 < Var2)
   ps <- as.numeric(colMeans(x))
