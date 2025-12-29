@@ -4,7 +4,14 @@
 \alias{binary_multiESS}
 \title{Multivariate ESS for binary variables}
 \usage{
-binary_multiESS(x, covmat = NULL, ncores = 2, eigen = FALSE, ...)
+binary_multiESS(
+  x,
+  covmat = NULL,
+  ncores = 2,
+  eigen = FALSE,
+  method = "lugsail",
+  ...
+)
 }
 \arguments{
 \item{x}{a matrix or data.frame containing only binary variables}
@@ -12,6 +19,10 @@ binary_multiESS(x, covmat = NULL, ncores = 2, eigen = FALSE, ...)
 \item{covmat}{(optional) covariance matrix.}
 
 \item{ncores}{(optional) number of cores to be used.}
+
+\item{eigen}{whether to use eigenvalues to compute the generalised determinant}
+
+\item{method}{if 'LSE' then the moment estimator of Berg and Song will be used, otherwise the lugsail estimator of Vats et al will be used}
 
 \item{...}{arguments for mcse.multi function.
 Don't use this if a suitable matrix estimate from mcse.multi or

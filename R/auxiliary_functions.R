@@ -56,8 +56,8 @@ get_beta <- function(alpha, p){
 #' @return a transition probability.
 #' @importFrom matrixStats logSumExp
 #' @export get_a
-#' @details  If X_k is a two-state Markov chain with transition probabilities \code{alpha} and \code{beta}, then
-#'  the state-changes Y_k = |X_k - X_{k-1}| also form a two-state Markov chain with transition probabiliti`es
+#' @details  If `X_k` is a two-state Markov chain with transition probabilities \code{alpha} and \code{beta}, then
+#'  the state-changes `Y_k = |X_k - X_{k-1}|` also form a two-state Markov chain with transition probabilities
 #'  \code{a} and \code{b}.
 #'
 get_a <- function(alpha, beta){
@@ -83,8 +83,8 @@ get_a <- function(alpha, beta){
 #' @return b transition probability.
 #' @importFrom matrixStats logSumExp
 #' @export get_b
-#' @details  If X_k is a two-state Markov chain with transition probabilities \code{alpha} and \code{beta}, then
-#'  the state-changes Y_k = |X_k - X_{k-1}| also form a two-state Markov chain with transition probabiliti`es
+#' @details  If `X_k` is a two-state Markov chain with transition probabilities \code{alpha} and \code{beta}, then
+#'  the state-changes `Y_k = |X_k - X_{k-1}|` also form a two-state Markov chain with transition probabiliti`es
 #'  \code{a} and \code{b}.
 #'
 get_b <- function(alpha, beta){

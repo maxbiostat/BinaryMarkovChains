@@ -215,9 +215,12 @@ theo_multivariate_ESS <- function(N, Lambda, Sigma, eigen = FALSE) {
 #' @param x a matrix or data.frame containing only binary variables
 #' @param covmat (optional) covariance matrix.
 #' @param ncores (optional) number of cores to be used.
+#' @param eigen whether to use eigenvalues to compute the generalised determinant
+#' @param method if 'LSE' then the moment estimator of Berg and Song will be used, otherwise the lugsail estimator of Vats et al will be used
 #' @param ... arguments for mcse.multi function.
 #'  Don't use this if a suitable matrix estimate from mcse.multi or
 #'  mcse.initseq is already obtained (copied from **mcmcse** documentation).
+
 #'
 #' @return the multivariate ESS of the variables.
 #' 
@@ -232,7 +235,7 @@ theo_multivariate_ESS <- function(N, Lambda, Sigma, eigen = FALSE) {
 #' binary_multiESS(X)
 #' mcmcse::multiESS(X)
 binary_multiESS <- function (x, covmat = NULL,
-                             ncores = 2, eigen = FALSE, ...) 
+                             ncores = 2, eigen = FALSE, method = "lugsail", ...) 
 {
   chain <- as.matrix(x)
   if (!is.matrix(x) && !is.data.frame(x)) 
@@ -246,7 +249,11 @@ binary_multiESS <- function (x, covmat = NULL,
                             eigen = eigen)
   }
   else {
-    covmat <- mcmcse::mcse.multi(chain, ...)$cov
+    if(method == "LSE"){
+      covmat <- momentLS::mtvMLSE(x = chain)$cov
+    }else{
+      covmat <- mcmcse::mcse.multi(chain, ...)$cov
+    }
     var_mat <- binary_cov_matrix(chain, ncores = ncores)
     ess <- theo_multivariate_ESS(N = n,
                             Lambda = var_mat, Sigma = covmat,

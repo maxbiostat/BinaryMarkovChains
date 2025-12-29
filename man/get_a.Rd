@@ -18,7 +18,7 @@ a transition probability.
 The a parameter in the state-change Markov chain.
 }
 \details{
-If X_k is a two-state Markov chain with transition probabilities \code{alpha} and \code{beta}, then
-the state-changes Y_k = |X_k - X_{k-1}| also form a two-state Markov chain with transition probabiliti`es
+If \code{X_k} is a two-state Markov chain with transition probabilities \code{alpha} and \code{beta}, then
+the state-changes \verb{Y_k = |X_k - X_\{k-1\}|} also form a two-state Markov chain with transition probabilities
 \code{a} and \code{b}.
 }
